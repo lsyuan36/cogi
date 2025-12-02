@@ -29,6 +29,9 @@ jobs:
       run: npm run build
       # 這一步執行後，Vue 通常會產生一個 dist 資料夾，這就是我們要部署的內容
 
+    - name: Create .nojekyll
+      run: touch dist/.nojekyll
+
     # ↓↓↓ 新增：部署到 GitHub Pages ↓↓↓
     - name: Deploy to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@v4
