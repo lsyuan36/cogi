@@ -1,0 +1,37 @@
+name: Deploy Vue to GitHub Pages
+
+on:
+  push:
+    branches: [ "main" ] # 當推送到 main 時觸發
+
+# 重要：給予 Action 推送程式碼到 gh-pages 分支的權限
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build Project
+      run: npm run build
+      # 這一步執行後，Vue 通常會產生一個 dist 資料夾，這就是我們要部署的內容
+
+    # ↓↓↓ 新增：部署到 GitHub Pages ↓↓↓
+    - name: Deploy to GitHub Pages
+      uses: JamesIves/github-pages-deploy-action@v4
+      with:
+        folder: dist # Vue 打包後的資料夾名稱 (Vite 預設是 dist)
+        branch: gh-pages # 將打包結果推送到這個分支
