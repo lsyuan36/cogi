@@ -334,10 +334,10 @@
             <div class="flex items-center justify-between mb-6">
               <h3 class="font-bold text-lg text-white">審核確認清單</h3>
               <button
-                @click="showChecklistDetails = !showChecklistDetails"
-                class="text-sm text-corgi-primary hover:text-corgi-secondary transition-colors"
+                @click="showChecklistModal = true"
+                class="text-sm px-4 py-1.5 border border-corgi-primary/40 text-corgi-primary rounded-lg hover:bg-corgi-primary/10 transition-colors"
               >
-                {{ showChecklistDetails ? '收起詳情' : '展開詳情' }}
+                查看詳情
               </button>
             </div>
 
@@ -364,41 +364,7 @@
             </div>
           </div>
 
-          <div v-if="showChecklistDetails" class="space-y-6 max-h-[600px] overflow-y-auto pr-2">
-            <!-- Level 1: 企業自證確認 -->
-            <div class="border border-gray-700 rounded-lg p-5 bg-gray-900/30">
-              <div class="flex items-center gap-2 mb-4">
-                <span class="text-xl">🐶</span>
-                <h4 class="font-bold text-corgi-primary">Level 1: 企業自證資料</h4>
-                <span class="ml-auto text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded-full">✓ 已完成</span>
-              </div>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="space-y-2">
-                  <div class="text-sm font-semibold text-gray-300 mb-2">IT 人力配置</div>
-                  <div class="flex items-center gap-2 text-sm text-gray-400">
-                    <span class="text-green-400">✓</span>
-                    <span>專職資安人員 (2人)</span>
-                  </div>
-                  <div class="flex items-center gap-2 text-sm text-gray-400">
-                    <span class="text-green-400">✓</span>
-                    <span>定期資安教育訓練</span>
-                  </div>
-                </div>
-                <div class="space-y-2">
-                  <div class="text-sm font-semibold text-gray-300 mb-2">資料備份</div>
-                  <div class="flex items-center gap-2 text-sm text-gray-400">
-                    <span class="text-green-400">✓</span>
-                    <span>每日自動備份</span>
-                  </div>
-                  <div class="flex items-center gap-2 text-sm text-gray-400">
-                    <span class="text-green-400">✓</span>
-                    <span>異地備援機制</span>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
-        </div>
         </div>
 
         <!-- Right Column: Decision -->
@@ -597,16 +563,110 @@
       </div>
     </div>
   </div>
+
+  <div
+    v-if="showChecklistModal"
+    class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+    @click.self="showChecklistModal = false"
+  >
+    <div
+      class="w-full max-w-4xl bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl p-6 space-y-5 max-h-[90vh] overflow-y-auto"
+    >
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-xs uppercase tracking-[0.3em] text-gray-400">Checklist Overview</p>
+          <h3 class="text-2xl font-bold text-white">{{ riskStore.companyName }} 審核詳情</h3>
+        </div>
+        <button class="text-gray-400 hover:text-white transition-colors" @click="showChecklistModal = false">
+          ✕
+        </button>
+      </div>
+      <div class="text-sm text-gray-400 flex flex-wrap gap-3">
+        <span>產業：{{ getIndustryName(riskStore.industry) }}</span>
+        <span>風險評級：{{ riskStore.riskLevel }}</span>
+        <span>科技信用分：{{ riskStore.finalScore }}/100</span>
+      </div>
+      <article class="border border-gray-700 rounded-xl p-4 bg-gray-900/70 space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm text-gray-300">
+          <div
+            v-for="level in checklistLevels"
+            :key="level.label"
+            class="bg-gray-800/70 border border-gray-700 rounded-lg p-3 flex flex-col gap-1"
+          >
+            <div class="flex items-center justify-between text-xs text-gray-400">
+              <span>{{ level.label }}</span>
+              <span :class="level.statusClass">{{ level.status }}</span>
+            </div>
+            <p class="leading-relaxed">{{ level.detail }}</p>
+          </div>
+        </div>
+        <div>
+          <p class="text-xs uppercase tracking-wider text-gray-400 mb-2">科技構面分數</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div
+              v-for="dimension in dimensionEntries"
+              :key="dimension.key"
+              class="bg-gray-800/60 border border-gray-700 rounded-lg p-3 flex items-center justify-between text-sm"
+            >
+              <span class="text-gray-300">{{ dimension.label }}</span>
+              <span class="text-white font-semibold">{{ dimension.value }}/100</span>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
 </template>
 
+
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRiskStore } from '@/stores/riskStore'
 import CorgiLineChart from '@/components/CorgiLineChart.vue'
 
 const riskStore = useRiskStore()
 const useCorgiRisk = ref(false)
-const showChecklistDetails = ref(false)
+const showChecklistModal = ref(false)
+
+const checklistLevels = computed(() => [
+  {
+    label: 'Level 1 自證',
+    status: '完成',
+    statusClass: 'text-emerald-300',
+    detail: '企業自證表單與現地訪查已確認。'
+  },
+  {
+    label: 'Level 2 系統串接',
+    status: riskStore.isApiConnected ? 'API 已串接' : 'API 未串接',
+    statusClass: riskStore.isApiConnected ? 'text-emerald-300' : 'text-amber-300',
+    detail: riskStore.isApiConnected
+      ? '監控與弱掃等數據可以即時回傳。'
+      : '尚未授權 API，請提醒客戶提供存取權限。'
+  },
+  {
+    label: 'Level 3 第三方文件',
+    status: '待上傳',
+    statusClass: 'text-amber-300',
+    detail: '需補交 ISO/SOC 證書或外部稽核報告以完成審核。'
+  }
+])
+
+const dimensionLabels = {
+  stability: '系統穩定性',
+  security: '資安成熟度',
+  governance: '科技治理',
+  supplier: '供應商依賴',
+  aiRisk: 'AI 使用風險',
+  trend: '趨勢適應力'
+}
+
+const dimensionEntries = computed(() =>
+  Object.entries(riskStore.dimensions).map(([key, value]) => ({
+    key,
+    label: dimensionLabels[key] || key,
+    value
+  }))
+)
 
 const toggleCorgiRisk = () => {
   useCorgiRisk.value = !useCorgiRisk.value
@@ -614,15 +674,16 @@ const toggleCorgiRisk = () => {
 
 const getIndustryName = (industry) => {
   const names = {
-    'retail': '零售業',
-    'medical': '醫療業',
-    'manufacturing': '製造業',
-    'tech': '科技業',
-    'finance': '金融業'
+    retail: '零售業',
+    medical: '醫療業',
+    manufacturing: '製造業',
+    tech: '科技業',
+    finance: '金融業'
   }
   return names[industry] || industry
 }
 </script>
+
 
 <style scoped>
 /* Slide Down Animation */
