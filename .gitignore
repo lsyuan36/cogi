@@ -1,4 +1,5 @@
 AGENTS.md
 .claude
-node_ modules
+node_modules
+dist
 CLAUDE.md
