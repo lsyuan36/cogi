@@ -186,150 +186,220 @@
       </div>
 
         <!-- Middle Column: Simulator -->
-        <div class="col-span-5 bg-gray-800 border border-gray-700 rounded-xl p-5 shadow-sm">
-        <div class="flex justify-between items-center mb-6">
-          <div>
-            <h3 class="font-bold text-lg text-white">動態授信評估系統</h3>
-            <p class="text-xs text-gray-400 mt-1">比較傳統模型與 CorgiRisk 動態風險評估</p>
-          </div>
-          <div class="flex items-center gap-3">
-            <span class="text-sm font-medium" :class="useCorgiRisk ? 'text-corgi-primary' : 'text-gray-400'">
-              導入 CorgiRisk
-            </span>
-            <button
-              @click="toggleCorgiRisk"
-              class="relative w-14 h-7 rounded-full transition-all duration-300 shadow-inner"
-              :class="useCorgiRisk ? 'bg-corgi-primary shadow-corgi-primary/50' : 'bg-gray-600'"
+        <div class="col-span-5 flex flex-col gap-5">
+          <div class="bg-gray-800 border border-gray-700 rounded-xl p-5 shadow-sm space-y-6">
+            <div class="flex justify-between items-center">
+              <div>
+                <h3 class="font-bold text-lg text-white">動態授信評估系統</h3>
+                <p class="text-xs text-gray-400 mt-1">比較傳統模型與 CorgiRisk 動態風險評估</p>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-sm font-medium" :class="useCorgiRisk ? 'text-corgi-primary' : 'text-gray-400'">
+                  導入 CorgiRisk
+                </span>
+                <button
+                  @click="toggleCorgiRisk"
+                  class="relative w-14 h-7 rounded-full transition-all duration-300 shadow-inner"
+                  :class="useCorgiRisk ? 'bg-corgi-primary shadow-corgi-primary/50' : 'bg-gray-600'"
+                >
+                  <div
+                    class="w-5 h-5 bg白 rounded-full absolute top-1 transition-all duration-300 shadow-lg"
+                    :class="useCorgiRisk ? 'left-8' : 'left-1'"
+                  >
+                    <div v-if="useCorgiRisk" class="absolute inset-0 flex items-center justify-center text-xs">
+                      ✓
+                    </div>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            <div
+              class="rounded-lg p-4 relative h-[280px] transition-all duration-500"
+              :class="useCorgiRisk ? 'bg-gradient-to-br from-gray-900 to-corgi-darker/20 border-2 border-corgi-primary/30' : 'bg-gray-900 border border-gray-700'"
             >
+              <CorgiLineChart :use-corgi-risk="useCorgiRisk" />
+
+              <transition name="slide-down">
+                <div v-if="useCorgiRisk" class="absolute bottom-4 left-4 right-4 bg-corgi-darker/90 backdrop-blur-sm border border-corgi-primary/50 rounded-lg p-3">
+                  <div class="flex items-center justify-between text-xs flex-wrap gap-2">
+                    <div class="flex items-center gap-2">
+                      <span class="text-gray-400">改善幅度:</span>
+                      <span class="text-green-400 font-bold">↓ 75%</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="text-gray-400">預測準確度:</span>
+                      <span class="text-corgi-primary font-bold">+42%</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="text-gray-400">風險可見度:</span>
+                      <span class="text-blue-400 font-bold">即時</span>
+                    </div>
+                  </div>
+                </div>
+              </transition>
+            </div>
+          </div>
+
+          <div class="bg-gray-800 border border-gray-700 rounded-xl p-5 shadow-sm">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div
-                class="w-5 h-5 bg-white rounded-full absolute top-1 transition-all duration-300 shadow-lg"
-                :class="useCorgiRisk ? 'left-8' : 'left-1'"
+                class="p-4 rounded-lg border transition-all duration-500"
+                :class="useCorgiRisk
+                  ? 'bg-green-900/20 border-green-500/50'
+                  : 'bg-red-900/20 border-red-500/50'"
               >
-                <div v-if="useCorgiRisk" class="absolute inset-0 flex items-center justify-center text-xs">
-                  ✓
+                <div class="flex items-center justify-between mb-2">
+                  <div class="text-xs text-gray-400">預估違約率 (PD)</div>
+                  <transition name="bounce" mode="out-in">
+                    <span :key="useCorgiRisk" class="text-xs px-2 py-0.5 rounded-full" :class="useCorgiRisk ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'">
+                      {{ useCorgiRisk ? '低風險' : '高風險' }}
+                    </span>
+                  </transition>
                 </div>
+                <transition name="number-change" mode="out-in">
+                  <div :key="useCorgiRisk" class="text-2xl font-bold" :class="useCorgiRisk ? 'text-green-400' : 'text-red-400'">
+                    {{ useCorgiRisk ? '1.2%' : '4.8%' }}
+                  </div>
+                </transition>
+                <transition name="slide-up">
+                  <div v-if="useCorgiRisk" class="text-xs text-green-400 mt-1 flex items-center gap-1">
+                    <span>↓</span>
+                    <span class="font-semibold">改善 75%</span>
+                  </div>
+                </transition>
               </div>
-            </button>
-          </div>
-        </div>
 
-        <!-- Chart Area -->
-        <div
-          class="rounded-lg p-4 mb-6 relative h-[280px] transition-all duration-500"
-          :class="useCorgiRisk ? 'bg-gradient-to-br from-gray-900 to-corgi-darker/20 border-2 border-corgi-primary/30' : 'bg-gray-900 border border-gray-700'"
-        >
-          <CorgiLineChart :use-corgi-risk="useCorgiRisk" />
+              <div
+                class="p-4 rounded-lg border transition-all duration-500"
+                :class="useCorgiRisk
+                  ? 'bg-corgi-primary/10 border-corgi-primary/50'
+                  : 'bg-gray-900/50 border-gray-700'"
+              >
+                <div class="flex items-center justify-between mb-2">
+                  <div class="text-xs text-gray-400">建議授信額度</div>
+                  <transition name="bounce" mode="out-in">
+                    <span v-if="useCorgiRisk" class="text-xs bg-corgi-primary/20 text-corgi-primary px-2 py-0.5 rounded-full">
+                      +87.5%
+                    </span>
+                  </transition>
+                </div>
+                <transition name="number-change" mode="out-in">
+                  <div :key="useCorgiRisk" class="text-2xl font-bold text-white">
+                    {{ useCorgiRisk ? '1,500' : '800' }} <span class="text-sm text-gray-400">萬</span>
+                  </div>
+                </transition>
+                <div class="text-xs text-gray-500 mt-1">新台幣</div>
+              </div>
 
-          <!-- 比較指標浮動顯示 -->
-          <transition name="slide-down">
-            <div v-if="useCorgiRisk" class="absolute bottom-4 left-4 right-4 bg-corgi-darker/90 backdrop-blur-sm border border-corgi-primary/50 rounded-lg p-3">
-              <div class="flex items-center justify-between text-xs">
-                <div class="flex items-center gap-2">
-                  <span class="text-gray-400">改善幅度:</span>
-                  <span class="text-green-400 font-bold">↓ 75%</span>
+              <div
+                class="p-4 rounded-lg border transition-all duration-500"
+                :class="useCorgiRisk
+                  ? 'bg-corgi-primary/10 border-corgi-primary/50'
+                  : 'bg-gray-900/50 border-gray-700'"
+              >
+                <div class="flex items-center justify-between mb-2">
+                  <div class="text-xs text-gray-400">利率減碼</div>
+                  <transition name="bounce" mode="out-in">
+                    <span v-if="useCorgiRisk" class="text-xs bg-corgi-primary/20 text-corgi-primary px-2 py-0.5 rounded-full">
+                      優惠
+                    </span>
+                  </transition>
                 </div>
-                <div class="flex items-center gap-2">
-                  <span class="text-gray-400">預測準確度:</span>
-                  <span class="text-corgi-primary font-bold">+42%</span>
-                </div>
-                <div class="flex items-center gap-2">
-                  <span class="text-gray-400">風險可見度:</span>
-                  <span class="text-blue-400 font-bold">即時</span>
-                </div>
+                <transition name="number-change" mode="out-in">
+                  <div :key="useCorgiRisk" class="text-2xl font-bold text-corgi-primary">
+                    {{ useCorgiRisk ? '0.15%' : '0%' }}
+                  </div>
+                </transition>
+                <div class="text-xs text-gray-500 mt-1">年利率折扣</div>
               </div>
             </div>
-          </transition>
-        </div>
 
-        <!-- Simulation Controls -->
-        <div class="grid grid-cols-3 gap-4">
-          <div
-            class="p-4 rounded-lg border transition-all duration-500"
-            :class="useCorgiRisk
-              ? 'bg-green-900/20 border-green-500/50'
-              : 'bg-red-900/20 border-red-500/50'"
-          >
-            <div class="flex items-center justify-between mb-2">
-              <div class="text-xs text-gray-400">預估違約率 (PD)</div>
-              <transition name="bounce" mode="out-in">
-                <span :key="useCorgiRisk" class="text-xs px-2 py-0.5 rounded-full" :class="useCorgiRisk ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'">
-                  {{ useCorgiRisk ? '低風險' : '高風險' }}
-                </span>
-              </transition>
-            </div>
-            <transition name="number-change" mode="out-in">
-              <div :key="useCorgiRisk" class="text-2xl font-bold" :class="useCorgiRisk ? 'text-green-400' : 'text-red-400'">
-                {{ useCorgiRisk ? '1.2%' : '4.8%' }}
-              </div>
-            </transition>
             <transition name="slide-up">
-              <div v-if="useCorgiRisk" class="text-xs text-green-400 mt-1 flex items-center gap-1">
-                <span>↓</span>
-                <span class="font-semibold">改善 75%</span>
+              <div v-if="useCorgiRisk" class="mt-4 p-3 bg-corgi-primary/5 border border-corgi-primary/30 rounded-lg">
+                <div class="flex items-start gap-2">
+                  <span class="text-corgi-primary">💡</span>
+                  <div class="flex-1">
+                    <div class="text-xs font-semibold text-corgi-primary mb-1">CorgiRisk 優勢</div>
+                    <p class="text-xs text-gray-400 leading-relaxed">
+                      透過即時科技風險監控,動態調整違約機率預測,協助銀行提供更精準的授信條件,同時降低潛在風險。
+                    </p>
+                  </div>
+                </div>
               </div>
             </transition>
           </div>
 
-          <div
-            class="p-4 rounded-lg border transition-all duration-500"
-            :class="useCorgiRisk
-              ? 'bg-corgi-primary/10 border-corgi-primary/50'
-              : 'bg-gray-900/50 border-gray-700'"
-          >
-            <div class="flex items-center justify-between mb-2">
-              <div class="text-xs text-gray-400">建議授信額度</div>
-              <transition name="bounce" mode="out-in">
-                <span v-if="useCorgiRisk" class="text-xs bg-corgi-primary/20 text-corgi-primary px-2 py-0.5 rounded-full">
-                  +87.5%
-                </span>
-              </transition>
+          <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="font-bold text-lg text-white">審核確認清單</h3>
+              <button
+                @click="showChecklistDetails = !showChecklistDetails"
+                class="text-sm text-corgi-primary hover:text-corgi-secondary transition-colors"
+              >
+                {{ showChecklistDetails ? '收起詳情' : '展開詳情' }}
+              </button>
             </div>
-            <transition name="number-change" mode="out-in">
-              <div :key="useCorgiRisk" class="text-2xl font-bold text-white">
-                {{ useCorgiRisk ? '1,500' : '800' }} <span class="text-sm text-gray-400">萬</span>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+              <div class="p-4 bg-gray-900/50 rounded-lg border border-gray-700">
+                <div class="text-xs text-gray-400 mb-1">Level 1 完成度</div>
+                <div class="text-2xl font-bold text-green-400">100%</div>
+                <div class="text-xs text-gray-500 mt-1">企業自證資料</div>
               </div>
-            </transition>
-            <div class="text-xs text-gray-500 mt-1">新台幣</div>
+              <div class="p-4 bg-gray-900/50 rounded-lg border border-gray-700">
+                <div class="text-xs text-gray-400 mb-1">Level 2 串接數</div>
+                <div class="text-2xl font-bold text-corgi-primary">16/16</div>
+                <div class="text-xs text-gray-500 mt-1">API 自動擷取</div>
+              </div>
+              <div class="p-4 bg-gray-900/50 rounded-lg border border-gray-700">
+                <div class="text-xs text-gray-400 mb-1">Level 3 認證</div>
+                <div class="text-2xl font-bold text-yellow-400">待上傳</div>
+                <div class="text-xs text-gray-500 mt-1">第三方證書</div>
+              </div>
+            <div class="p-4 bg-gray-900/50 rounded-lg border border-gray-700">
+              <div class="text-xs text-gray-400 mb-1">整體完成度</div>
+              <div class="text-2xl font-bold text-white">67%</div>
+              <div class="text-xs text-gray-500 mt-1">2/3 關卡完成</div>
+            </div>
           </div>
 
-          <div
-            class="p-4 rounded-lg border transition-all duration-500"
-            :class="useCorgiRisk
-              ? 'bg-corgi-primary/10 border-corgi-primary/50'
-              : 'bg-gray-900/50 border-gray-700'"
-          >
-            <div class="flex items-center justify-between mb-2">
-              <div class="text-xs text-gray-400">利率減碼</div>
-              <transition name="bounce" mode="out-in">
-                <span v-if="useCorgiRisk" class="text-xs bg-corgi-primary/20 text-corgi-primary px-2 py-0.5 rounded-full">
-                  優惠
-                </span>
-              </transition>
-            </div>
-            <transition name="number-change" mode="out-in">
-              <div :key="useCorgiRisk" class="text-2xl font-bold text-corgi-primary">
-                {{ useCorgiRisk ? '0.15%' : '0%' }}
+          <div v-if="showChecklistDetails" class="space-y-6 max-h-[600px] overflow-y-auto pr-2">
+            <!-- Level 1: 企業自證確認 -->
+            <div class="border border-gray-700 rounded-lg p-5 bg-gray-900/30">
+              <div class="flex items-center gap-2 mb-4">
+                <span class="text-xl">🐶</span>
+                <h4 class="font-bold text-corgi-primary">Level 1: 企業自證資料</h4>
+                <span class="ml-auto text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded-full">✓ 已完成</span>
               </div>
-            </transition>
-            <div class="text-xs text-gray-500 mt-1">年利率折扣</div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="space-y-2">
+                  <div class="text-sm font-semibold text-gray-300 mb-2">IT 人力配置</div>
+                  <div class="flex items-center gap-2 text-sm text-gray-400">
+                    <span class="text-green-400">✓</span>
+                    <span>專職資安人員 (2人)</span>
+                  </div>
+                  <div class="flex items-center gap-2 text-sm text-gray-400">
+                    <span class="text-green-400">✓</span>
+                    <span>定期資安教育訓練</span>
+                  </div>
+                </div>
+                <div class="space-y-2">
+                  <div class="text-sm font-semibold text-gray-300 mb-2">資料備份</div>
+                  <div class="flex items-center gap-2 text-sm text-gray-400">
+                    <span class="text-green-400">✓</span>
+                    <span>每日自動備份</span>
+                  </div>
+                  <div class="flex items-center gap-2 text-sm text-gray-400">
+                    <span class="text-green-400">✓</span>
+                    <span>異地備援機制</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-
-        <!-- 效益說明 -->
-        <transition name="slide-up">
-          <div v-if="useCorgiRisk" class="mt-4 p-3 bg-corgi-primary/5 border border-corgi-primary/30 rounded-lg">
-            <div class="flex items-start gap-2">
-              <span class="text-corgi-primary">💡</span>
-              <div class="flex-1">
-                <div class="text-xs font-semibold text-corgi-primary mb-1">CorgiRisk 優勢</div>
-                <p class="text-xs text-gray-400 leading-relaxed">
-                  透過即時科技風險監控,動態調整違約機率預測,協助銀行提供更精準的授信條件,同時降低潛在風險。
-                </p>
-              </div>
-            </div>
-          </div>
-        </transition>
-      </div>
+        </div>
 
         <!-- Right Column: Decision -->
         <div class="col-span-4 space-y-4">
@@ -524,301 +594,8 @@
           </div>
         </div>
         </div>
-
-      </div>
-
-      <!-- 審核確認清單 - Full Width Below -->
-      <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 shadow-sm">
-      <div class="flex items-center justify-between mb-6">
-        <h3 class="font-bold text-lg text-white">審核確認清單</h3>
-        <button
-          @click="showChecklistDetails = !showChecklistDetails"
-          class="text-sm text-corgi-primary hover:text-corgi-secondary transition-colors"
-        >
-          {{ showChecklistDetails ? '收起詳情' : '展開詳情' }}
-        </button>
-      </div>
-
-      <!-- 快速總覽 -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <div class="p-4 bg-gray-900/50 rounded-lg border border-gray-700">
-          <div class="text-xs text-gray-400 mb-1">Level 1 完成度</div>
-          <div class="text-2xl font-bold text-green-400">100%</div>
-          <div class="text-xs text-gray-500 mt-1">企業自證資料</div>
-        </div>
-        <div class="p-4 bg-gray-900/50 rounded-lg border border-gray-700">
-          <div class="text-xs text-gray-400 mb-1">Level 2 串接數</div>
-          <div class="text-2xl font-bold text-corgi-primary">16/16</div>
-          <div class="text-xs text-gray-500 mt-1">API 自動擷取</div>
-        </div>
-        <div class="p-4 bg-gray-900/50 rounded-lg border border-gray-700">
-          <div class="text-xs text-gray-400 mb-1">Level 3 認證</div>
-          <div class="text-2xl font-bold text-yellow-400">待上傳</div>
-          <div class="text-xs text-gray-500 mt-1">第三方證書</div>
-        </div>
-        <div class="p-4 bg-gray-900/50 rounded-lg border border-gray-700">
-          <div class="text-xs text-gray-400 mb-1">整體完成度</div>
-          <div class="text-2xl font-bold text-white">67%</div>
-          <div class="text-xs text-gray-500 mt-1">2/3 關卡完成</div>
-        </div>
-      </div>
-
-      <!-- 詳細確認項目 (可展開) -->
-      <div v-if="showChecklistDetails" class="space-y-6">
-        <!-- Level 1: 企業自證確認 -->
-        <div class="border border-gray-700 rounded-lg p-5 bg-gray-900/30">
-          <div class="flex items-center gap-2 mb-4">
-            <span class="text-xl">🐶</span>
-            <h4 class="font-bold text-corgi-primary">Level 1: 企業自證資料</h4>
-            <span class="ml-auto text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded-full">✓ 已完成</span>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- IT 人力配置 -->
-            <div class="space-y-2">
-              <div class="text-sm font-semibold text-gray-300 mb-2">IT 人力配置</div>
-              <div class="flex items-center gap-2 text-sm text-gray-400">
-                <span class="text-green-400">✓</span>
-                <span>專職 IT 人員: 5 人</span>
-              </div>
-              <div class="flex items-center gap-2 text-sm text-gray-400">
-                <span class="text-green-400">✓</span>
-                <span>IT 主管: 已配置</span>
-              </div>
-              <div class="flex items-center gap-2 text-sm text-gray-400">
-                <span class="text-green-400">✓</span>
-                <span>外包廠商: TechSupport Inc.</span>
-              </div>
-            </div>
-
-            <!-- 資料備份策略 -->
-            <div class="space-y-2">
-              <div class="text-sm font-semibold text-gray-300 mb-2">資料備份策略</div>
-              <div class="flex items-center gap-2 text-sm text-gray-400">
-                <span class="text-green-400">✓</span>
-                <span>備份頻率: 每日</span>
-              </div>
-              <div class="flex items-center gap-2 text-sm text-gray-400">
-                <span class="text-green-400">✓</span>
-                <span>備份位置: 混合雲端+本地</span>
-              </div>
-              <div class="flex items-center gap-2 text-sm text-gray-400">
-                <span class="text-green-400">✓</span>
-                <span>異地備援: 已建置</span>
-              </div>
-            </div>
-
-            <!-- 資安防護措施 -->
-            <div class="space-y-2">
-              <div class="text-sm font-semibold text-gray-300 mb-2">資安防護措施</div>
-              <div class="flex items-center gap-2 text-sm text-gray-400">
-                <span class="text-green-400">✓</span>
-                <span>防火牆、防毒軟體</span>
-              </div>
-              <div class="flex items-center gap-2 text-sm text-gray-400">
-                <span class="text-green-400">✓</span>
-                <span>多因素驗證 (MFA)</span>
-              </div>
-              <div class="flex items-center gap-2 text-sm text-gray-400">
-                <span class="text-green-400">✓</span>
-                <span>入侵偵測系統 (IDS)</span>
-              </div>
-            </div>
-
-            <!-- 系統與基礎設施 -->
-            <div class="space-y-2">
-              <div class="text-sm font-semibold text-gray-300 mb-2">系統與基礎設施</div>
-              <div class="flex items-center gap-2 text-sm text-gray-400">
-                <span class="text-green-400">✓</span>
-                <span>機房安全: 門禁+監視器+UPS</span>
-              </div>
-              <div class="flex items-center gap-2 text-sm text-gray-400">
-                <span class="text-green-400">✓</span>
-                <span>雲端服務: AWS, Azure</span>
-              </div>
-              <div class="flex items-center gap-2 text-sm text-gray-400">
-                <span class="text-green-400">✓</span>
-                <span>負載平衡器: 已配置</span>
-              </div>
-            </div>
-
-            <!-- 營運持續性管理 -->
-            <div class="space-y-2">
-              <div class="text-sm font-semibold text-gray-300 mb-2">營運持續性管理</div>
-              <div class="flex items-center gap-2 text-sm text-gray-400">
-                <span class="text-green-400">✓</span>
-                <span>BCP 計畫: 已制定</span>
-              </div>
-              <div class="flex items-center gap-2 text-sm text-gray-400">
-                <span class="text-green-400">✓</span>
-                <span>演練測試: 6個月前</span>
-              </div>
-              <div class="flex items-center gap-2 text-sm text-gray-400">
-                <span class="text-green-400">✓</span>
-                <span>事件回應流程: 已建立</span>
-              </div>
-            </div>
-
-            <!-- 合規與認證 -->
-            <div class="space-y-2">
-              <div class="text-sm font-semibold text-gray-300 mb-2">合規與認證</div>
-              <div class="flex items-center gap-2 text-sm text-gray-400">
-                <span class="text-green-400">✓</span>
-                <span>ISO 27001: 已取得</span>
-              </div>
-              <div class="flex items-center gap-2 text-sm text-gray-400">
-                <span class="text-green-400">✓</span>
-                <span>GDPR 合規: 符合</span>
-              </div>
-              <div class="flex items-center gap-2 text-sm text-gray-400">
-                <span class="text-green-400">✓</span>
-                <span>滲透測試: 3個月前</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Level 2: 系統串接確認 -->
-        <div class="border border-gray-700 rounded-lg p-5 bg-gray-900/30">
-          <div class="flex items-center gap-2 mb-4">
-            <span class="text-xl">🔗</span>
-            <h4 class="font-bold text-corgi-secondary">Level 2: API 系統串接</h4>
-            <span class="ml-auto text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded-full">✓ 已完成</span>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <!-- 系統穩定性 -->
-            <div class="space-y-2">
-              <div class="text-sm font-semibold text-gray-300 mb-2">系統穩定性</div>
-              <div class="flex items-center gap-2 text-sm text-gray-400">
-                <span class="text-green-400">✓</span>
-                <span>可用性監控: 99.95%</span>
-              </div>
-              <div class="flex items-center gap-2 text-sm text-gray-400">
-                <span class="text-green-400">✓</span>
-                <span>APM 效能: Apdex 0.94</span>
-              </div>
-              <div class="flex items-center gap-2 text-sm text-gray-400">
-                <span class="text-green-400">✓</span>
-                <span>基礎設施: 15 台伺服器</span>
-              </div>
-            </div>
-
-            <!-- 錯誤與日誌 -->
-            <div class="space-y-2">
-              <div class="text-sm font-semibold text-gray-300 mb-2">錯誤與日誌</div>
-              <div class="flex items-center gap-2 text-sm text-gray-400">
-                <span class="text-green-400">✓</span>
-                <span>錯誤追蹤: 3 嚴重錯誤</span>
-              </div>
-              <div class="flex items-center gap-2 text-sm text-gray-400">
-                <span class="text-green-400">✓</span>
-                <span>日誌管理: 2.3 GB/日</span>
-              </div>
-              <div class="flex items-center gap-2 text-sm text-gray-400">
-                <span class="text-green-400">✓</span>
-                <span>使用者行為: 8.4K 工作階段</span>
-              </div>
-            </div>
-
-            <!-- 資安防護 -->
-            <div class="space-y-2">
-              <div class="text-sm font-semibold text-gray-300 mb-2">資安防護</div>
-              <div class="flex items-center gap-2 text-sm text-gray-400">
-                <span class="text-yellow-400">⚠</span>
-                <span>弱點掃描: 2 高風險</span>
-              </div>
-              <div class="flex items-center gap-2 text-sm text-gray-400">
-                <span class="text-green-400">✓</span>
-                <span>WAF 防火牆: 8 網域</span>
-              </div>
-              <div class="flex items-center gap-2 text-sm text-gray-400">
-                <span class="text-green-400">✓</span>
-                <span>SIEM: 24 事件來源</span>
-              </div>
-            </div>
-
-            <!-- 雲端平台 -->
-            <div class="space-y-2">
-              <div class="text-sm font-semibold text-gray-300 mb-2">雲端平台</div>
-              <div class="flex items-center gap-2 text-sm text-gray-400">
-                <span class="text-green-400">✓</span>
-                <span>AWS: 12 服務正常</span>
-              </div>
-              <div class="flex items-center gap-2 text-sm text-gray-400">
-                <span class="text-green-400">✓</span>
-                <span>Azure: 2 訂閱正常</span>
-              </div>
-              <div class="flex items-center gap-2 text-sm text-gray-400">
-                <span class="text-green-400">✓</span>
-                <span>GCP: 3 專案正常</span>
-              </div>
-            </div>
-
-            <!-- 資料庫 -->
-            <div class="space-y-2">
-              <div class="text-sm font-semibold text-gray-300 mb-2">資料庫</div>
-              <div class="flex items-center gap-2 text-sm text-gray-400">
-                <span class="text-green-400">✓</span>
-                <span>效能監控: 12ms 回應</span>
-              </div>
-              <div class="flex items-center gap-2 text-sm text-gray-400">
-                <span class="text-green-400">✓</span>
-                <span>備份驗證: 3小時前</span>
-              </div>
-              <div class="flex items-center gap-2 text-sm text-gray-400">
-                <span class="text-green-400">✓</span>
-                <span>還原測試: 2週前</span>
-              </div>
-            </div>
-
-            <!-- DevOps -->
-            <div class="space-y-2">
-              <div class="text-sm font-semibold text-gray-300 mb-2">DevOps</div>
-              <div class="flex items-center gap-2 text-sm text-gray-400">
-                <span class="text-green-400">✓</span>
-                <span>CI/CD: 94% 成功率</span>
-              </div>
-              <div class="flex items-center gap-2 text-sm text-gray-400">
-                <span class="text-green-400">✓</span>
-                <span>版本控制: 28 儲存庫</span>
-              </div>
-              <div class="flex items-center gap-2 text-sm text-gray-400">
-                <span class="text-green-400">✓</span>
-                <span>程式碼審查: 已啟用</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- 警示項目 -->
-          <div class="mt-4 p-3 bg-yellow-900/20 border border-yellow-700/50 rounded-lg">
-            <div class="flex items-start gap-2">
-              <span class="text-yellow-400">⚠️</span>
-              <div class="flex-1">
-                <div class="text-sm font-semibold text-yellow-400 mb-1">需注意事項</div>
-                <p class="text-xs text-gray-400">弱點掃描發現 2 個高風險漏洞,建議要求企業提供修補計畫或時程。</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Level 3: 第三方認證 -->
-        <div class="border border-gray-700 rounded-lg p-5 bg-gray-900/30">
-          <div class="flex items-center gap-2 mb-4">
-            <span class="text-xl">📄</span>
-            <h4 class="font-bold text-gray-400">Level 3: 第三方認證</h4>
-            <span class="ml-auto text-xs bg-gray-500/20 text-gray-400 px-2 py-1 rounded-full">待上傳</span>
-          </div>
-
-          <div class="text-center py-8 border-2 border-dashed border-gray-700 rounded-lg">
-            <div class="text-4xl mb-2">📤</div>
-            <p class="text-sm text-gray-500">企業尚未上傳 ISO 27001 證書或弱掃報告</p>
-            <p class="text-xs text-gray-600 mt-2">可考慮要求補件或依現有資料進行審核</p>
-          </div>
-        </div>
       </div>
     </div>
-  </div>
   </div>
 </template>
 

@@ -75,7 +75,7 @@ const goToSlide = (index) => {
     </div>
 
     <!-- Hero Section -->
-    <div class="flex flex-col items-center mb-8 mt-16 md:mt-20 z-10 text-center">
+    <div class="flex flex-col items-center mb-8 mt-4 md:mt-15 z-10 text-center">
       <img src="@/assets/images/logo.png" alt="CorgiRisk Logo" class="w-80 h-80 md:w-80 md:h-80 object-contain" />
       <h2 class="text-5xl md:text-6xl font-bold text-white mb-4">
         柯基風控
@@ -88,7 +88,7 @@ const goToSlide = (index) => {
     <!-- Value Propositions -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl w-full z-10 mb-12">
       <div class="group bg-corgi-surface/10 backdrop-blur-md border border-corgi-surface/20 p-8 rounded-2xl hover:bg-corgi-surface/20 hover:border-corgi-primary/50 hover:shadow-[0_0_40px_rgba(230,145,56,0.3)] transition-all duration-300 text-center">
-        <div class="text-6xl mb-4">🏢</div>
+      <img src="@/assets/images/1.png" alt="CorgiRisk Logo" class="w-80  md:w-80 object-contain" />
         <h3 class="text-2xl font-bold text-corgi-primary mb-3">企業價值</h3>
         <p class="text-corgi-text-light/80 leading-relaxed">
           建立科技信用資產，透明化 IT 體質，爭取更佳授信利率與條件
@@ -96,7 +96,7 @@ const goToSlide = (index) => {
       </div>
 
       <div class="group bg-corgi-surface/10 backdrop-blur-md border border-corgi-surface/20 p-8 rounded-2xl hover:bg-corgi-surface/20 hover:border-corgi-primary/50 hover:shadow-[0_0_40px_rgba(230,145,56,0.3)] transition-all duration-300 text-center">
-        <div class="text-6xl mb-4">💼</div>
+      <img src="@/assets/images/2.png" alt="CorgiRisk Logo" class="w-80 md:w-80  object-contain" />
         <h3 class="text-2xl font-bold text-corgi-primary mb-3">行員助力</h3>
         <p class="text-corgi-text-light/80 leading-relaxed">
           智慧訪查輔助系統，快速生成專業報告，提升徵信效率
@@ -104,7 +104,7 @@ const goToSlide = (index) => {
       </div>
 
       <div class="group bg-corgi-surface/10 backdrop-blur-md border border-corgi-surface/20 p-8 rounded-2xl hover:bg-corgi-surface/20 hover:border-corgi-primary/50 hover:shadow-[0_0_40px_rgba(230,145,56,0.3)] transition-all duration-300 text-center">
-        <div class="text-6xl mb-4">🔍</div>
+      <img src="@/assets/images/3.png" alt="CorgiRisk Logo" class="w-80 md:w-80 object-contain" />
         <h3 class="text-2xl font-bold text-corgi-primary mb-3">審核精準</h3>
         <p class="text-corgi-text-light/80 leading-relaxed">
           動態風險量化模型，降低誤判率，優化授信決策流程
