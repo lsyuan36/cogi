@@ -5,10 +5,19 @@
       <div class="absolute top-10 left-10 w-64 h-64 bg-corgi-primary rounded-full blur-[100px]"></div>
       <div class="absolute bottom-10 right-10 w-96 h-96 bg-corgi-secondary rounded-full blur-[120px]"></div>
     </div>
+    <router-link
+      to="/login"
+      class="absolute top-8 right-8 bg-corgi-primary/90 text-black font-semibold px-4 py-2 rounded-full shadow-lg hover:bg-white transition-colors z-20"
+    >
+      身份登入
+    </router-link>
 
-    <h1 class="text-4xl md:text-6xl font-bold text-corgi-primary mb-4 text-center z-10">
-      CorgiRisk 柯基風控
-    </h1>
+    <div class="flex flex-col items-center mb-2 z-10">
+      <img src="@/assets/images/logo.png" alt="CorgiRisk Logo" class="w-24 h-24 md:w-32 md:h-32 object-contain mb-4" />
+      <h1 class="text-4xl md:text-6xl font-bold text-corgi-primary mb-4 text-center">
+        CorgiRisk 柯基風控
+      </h1>
+    </div>
     <p class="text-xl md:text-2xl text-corgi-text-light mb-12 text-center max-w-2xl z-10">
       解決中小企科技體質黑箱，協助銀行降低 Type I & II 授信錯誤
     </p>

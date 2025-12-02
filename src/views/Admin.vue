@@ -1,7 +1,10 @@
 <template>
   <div class="min-h-screen bg-corgi-dark text-white p-6">
     <header class="flex justify-between items-center mb-8 border-b border-gray-800 pb-4">
-      <h1 class="text-2xl font-bold text-corgi-primary">CorgiRisk 管理後台</h1>
+      <div class="flex items-center gap-3">
+        <img src="@/assets/images/logo.png" alt="CorgiRisk Logo" class="w-10 h-10 object-contain" />
+        <h1 class="text-2xl font-bold text-corgi-primary">CorgiRisk 管理後台</h1>
+      </div>
       <router-link to="/" class="text-gray-400 hover:text-white">回首頁</router-link>
     </header>
 

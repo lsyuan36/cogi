@@ -20,15 +20,19 @@ export const useRiskStore = defineStore('risk', {
   }),
   getters: {
     finalScore: (state) => {
-      // 簡單的模擬算法：如果有紅旗，分數大扣
+      // 計算扣分:如果有紅旗,分數扣減
       let deduction = state.redFlags.length * 15;
       return Math.max(0, state.baseScore - deduction);
     },
     riskLevel: (state) => {
       const score = state.finalScore;
-      if (score >= 80) return 'A';
-      if (score >= 70) return 'B';
-      return 'C';
+      if (score >= 90) return 'AAA';
+      if (score >= 80) return 'AA';
+      if (score >= 70) return 'A';
+      if (score >= 60) return 'BBB';
+      if (score >= 50) return 'BB';
+      if (score >= 40) return 'B';
+      return 'CCC';
     }
   },
   actions: {
@@ -38,7 +42,7 @@ export const useRiskStore = defineStore('risk', {
     },
     connectApi() {
       this.isApiConnected = true;
-      // 模擬 API 發現問題，分數微調
+      // API 串接後分數調整
       this.baseScore += 5; 
     },
     setIndustry(industry) {

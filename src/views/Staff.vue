@@ -6,7 +6,8 @@
         <router-link to="/" class="text-gray-400 hover:text-white transition-colors">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
         </router-link>
-        <h1 class="font-bold text-xl">科技訪查助手 (Desktop)</h1>
+        <img src="@/assets/images/logo.png" alt="CorgiRisk Logo" class="w-8 h-8 object-contain" />
+        <h1 class="font-bold text-xl">科技訪查助手</h1>
       </div>
       <div class="flex items-center gap-4">
         <div class="bg-white/10 px-4 py-2 rounded-lg flex items-center gap-3">
@@ -53,6 +54,39 @@
               <li>確認機房是否有獨立空調</li>
               <li>詢問上次災難演練時間</li>
               <li>檢查備份硬碟存放位置</li>
+            </ul>
+          </div>
+
+          <div class="border-t border-gray-100 pt-4 space-y-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-xs text-gray-500 uppercase tracking-wide">標普科技風險評級</p>
+                <p class="text-4xl font-black text-corgi-primary leading-tight">{{ riskStore.riskLevel }}</p>
+                <p class="text-xs text-gray-400">科技信用分：{{ riskStore.finalScore }} / 100</p>
+              </div>
+              <div class="text-right text-xs space-y-1">
+                <p class="text-gray-500">流程完成度</p>
+                <p class="text-corgi-primary font-semibold">{{ progressPercent }}%</p>
+              </div>
+            </div>
+
+            <ul class="space-y-2">
+              <li
+                v-for="status in levelStatuses"
+                :key="status.level"
+                class="flex items-center justify-between text-xs border border-gray-100 rounded-lg px-3 py-2"
+              >
+                <div>
+                  <p class="font-semibold text-gray-700">{{ status.level }}｜{{ status.label }}</p>
+                  <p class="text-gray-400">{{ status.hint }}</p>
+                </div>
+                <span
+                  :class="status.done ? 'text-emerald-600 bg-emerald-50 border-emerald-100' : 'text-amber-600 bg-amber-50 border-amber-100'"
+                  class="px-3 py-1 rounded-full border text-[11px] font-semibold"
+                >
+                  {{ status.done ? '已確認' : '待確認' }}
+                </span>
+              </li>
             </ul>
           </div>
         </div>
@@ -114,6 +148,28 @@
                 <div class="font-bold text-corgi-text-dark">作業系統是否皆為正版且更新？</div>
                 <div class="text-sm text-gray-500 mt-1">企業自填：<span class="text-green-600 font-bold">是</span></div>
               </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-8 border-t border-gray-100 pt-6">
+          <h3 class="text-sm font-bold text-gray-500 mb-4">科技構面確認（同步 Business 評估）</h3>
+          <div class="space-y-3">
+            <div
+              v-for="item in dimensionCheckpoints"
+              :key="item.key"
+              class="border border-gray-100 rounded-lg p-4 hover:border-corgi-primary/30 transition-colors"
+            >
+              <div class="flex items-center justify-between mb-2">
+                <div>
+                  <p class="font-semibold text-gray-800">{{ item.title }}</p>
+                  <p class="text-xs text-gray-400">評分：{{ item.score }} / 100</p>
+                </div>
+                <span :class="item.badgeClass" class="px-3 py-1 rounded-full text-[11px] font-semibold border">
+                  {{ item.statusLabel }}
+                </span>
+              </div>
+              <p class="text-sm text-gray-600">{{ item.action }}</p>
             </div>
           </div>
         </div>
@@ -181,7 +237,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRiskStore } from '@/stores/riskStore'
 
 const riskStore = useRiskStore()
@@ -189,6 +245,87 @@ const showWarning = ref(false)
 const photoTaken = ref(false)
 const isCameraLoading = ref(false)
 const evidenceImage = ref(null)
+const progressPercent = computed(() => {
+  let completed = 1
+  if (riskStore.isApiConnected) completed += 1
+  return Math.round((completed / 3) * 100)
+})
+
+const levelStatuses = computed(() => [
+  {
+    level: 'Level 1',
+    label: '企業自證',
+    hint: '表單資料已交付，現場僅需確認佐證',
+    done: true
+  },
+  {
+    level: 'Level 2',
+    label: '系統串接',
+    hint: riskStore.isApiConnected ? 'API 數據已回傳，可對照儀表板' : '尚未串接，提醒客戶預留 API 權限',
+    done: riskStore.isApiConnected
+  },
+  {
+    level: 'Level 3',
+    label: '第三方認證',
+    hint: '待四大顧問或客戶自行上傳，需提醒交件時程',
+    done: false
+  }
+])
+
+const dimensionBlueprint = [
+  {
+    key: 'stability',
+    title: '系統穩定性',
+    action: '確認混合雲 HA / 監控畫面是否與 Business 儀表板一致'
+  },
+  {
+    key: 'security',
+    title: '資安成熟度',
+    action: '索取最近弱掃/滲透報告或第三方稽核紀錄'
+  },
+  {
+    key: 'governance',
+    title: '科技治理',
+    action: '確認災難演練紀錄與科技治理會議文件'
+  },
+  {
+    key: 'supplier',
+    title: '供應商依賴',
+    action: '拍攝關鍵供應商設備與 SLA，確認備援方案'
+  },
+  {
+    key: 'aiRisk',
+    title: 'AI 風險',
+    action: '確認 AI 模型審批流程與資料保留政策'
+  },
+  {
+    key: 'trend',
+    title: '趨勢適應力',
+    action: '追問近期雲端 / AI 轉型時程並記錄差異'
+  }
+]
+
+const classifyDimension = (score) => {
+  if (score >= 80) {
+    return { statusLabel: '穩健', badgeClass: 'bg-emerald-50 text-emerald-600 border-emerald-100' }
+  }
+  if (score >= 60) {
+    return { statusLabel: '需追蹤', badgeClass: 'bg-amber-50 text-amber-600 border-amber-100' }
+  }
+  return { statusLabel: '緊急', badgeClass: 'bg-red-50 text-red-600 border-red-100' }
+}
+
+const dimensionCheckpoints = computed(() =>
+  dimensionBlueprint.map((item) => {
+    const score = riskStore.dimensions[item.key] ?? 0
+    const statusMeta = classifyDimension(score)
+    return {
+      ...item,
+      score,
+      ...statusMeta
+    }
+  })
+)
 
 // Use a placeholder if the image doesn't exist yet
 const placeholderImage = 'https://images.unsplash.com/photo-1558494949-ef526b0042a0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'

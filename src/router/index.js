@@ -1,5 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import Landing from '../views/Landing.vue'
+import Welcome from '../views/Welcome.vue'
 import Business from '../views/Business.vue'
 import Staff from '../views/Staff.vue'
 import Credit from '../views/Credit.vue'
@@ -10,8 +10,8 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'landing',
-      component: Landing
+      name: 'welcome',
+      component: Welcome
     },
     {
       path: '/business',
